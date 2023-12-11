@@ -1,0 +1,48 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { CognitoUserPool, CognitoUser } from "amazon-cognito-identity-js";
+
+if (!Astro.cookies.has("cognito_username")) {
+  return Astro.redirect("/");
+}
+
+if (Astro.request.method === "POST") {
+  const data = await Astro.request.formData();
+  const confirmationCode = data.get("confirmationCode");
+
+  const POOL_DATA = {
+    UserPoolId: import.meta.env.VITE_COGNITO_USER_POOL_ID,
+    ClientId: import.meta.env.VITE_COGNITO_CLIENT_ID,
+  };
+  const userPool = new CognitoUserPool(POOL_DATA);
+  const userData = {
+    Username: Astro.cookies.get("username"),
+    Pool: userPool,
+  };
+
+  const cognitoUser = new CognitoUser(userData);
+  cognitoUser.confirmRegistration(
+    confirmationCode,
+    true,
+    function (err, result) {
+      if (err) {
+        alert(err.message || JSON.stringify(err));
+        return;
+      }
+      console.log("call result: " + result);
+    }
+  );
+}
+---
+
+<Layout title="ToggleSoft - Sign Up">
+  <section id="createAccountSection" class="bg-gray-50">
+    <div
+      class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0"
+    >
+      <div class="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0">
+        <div class="p-6 space-y-4 md:space-y-6 sm:p-8"></div>
+      </div>
+    </div>
+  </section>
+</Layout>

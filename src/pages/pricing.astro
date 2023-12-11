@@ -1,0 +1,39 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PricingCard from "../components/PricingCard.astro";
+---
+
+<Layout title="ToggleSoft Pricing">
+  <div class="mx-auto max-w-screen-md text-center mb-8 lg:mb-12">
+    <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900">
+      We've got plans for everyone
+    </h2>
+    <p class="mb-5 font-light text-gray-500 sm:text-xl">
+      We have solutions to your problems. No problems? We've got a solution for
+      that too.
+    </p>
+  </div>
+  <div
+    id="pricingCards"
+    class="lg:grid lg:grid-cols-3 sm:gap-6 xl:gap-10 lg:space-y-0"
+  >
+    <PricingCard
+      id="starterCard"
+      title="Starter"
+      subhead="When you aren't sure what we do but figure it's cheap enough not to care."
+      price="9"
+    />
+    <PricingCard
+      id="companyCard"
+      title="Company"
+      subhead="When you have a dev team and want to see if they follow directions."
+      price="99"
+    />
+    <PricingCard
+      id="enterpriseCard"
+      title="Enterprise"
+      subhead="Your budget is big enough that you might never notice you're paying us."
+      price="499"
+    />
+  </div>
+</Layout>
