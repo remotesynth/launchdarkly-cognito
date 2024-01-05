@@ -130,6 +130,15 @@ export async function getAttributes() {
   });
 }
 
+export async function getAttribute(attributeName: string) {
+  const attributes = await getAttributes();
+  const attribute = attributes.find(
+    (attribute: any) => attribute.Name === attributeName
+  );
+
+  return attribute;
+}
+
 export async function setAttribute(attribute: any) {
   return new Promise(function (resolve, reject) {
     const attributeList = [];

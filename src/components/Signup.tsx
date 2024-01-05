@@ -4,6 +4,7 @@ import {
   signInWithEmail,
 } from "../lib/cognito";
 import { useState } from "react";
+import { isLoggedIn, developerType } from "../store/store";
 
 export default function SignUp() {
   const [email, setEmail] = useState("");
@@ -41,18 +42,21 @@ export default function SignUp() {
       await verifyCode(email, otp);
       // get their tokens
       const currentUser = await signInWithEmail(email, password);
-      window.localStorage.setItem(
+      /*window.localStorage.setItem(
         "accessToken",
         `${currentUser.accessToken.jwtToken}`
       );
       window.localStorage.setItem(
         "refreshToken",
         `${currentUser.refreshToken.token}`
-      );
+      ); */
+      isLoggedIn.set(true);
+      developerType.set(devType);
       window.location.href = "/";
     } catch (err) {
       if (err instanceof Error) {
         console.log("error", err.message);
+        isLoggedIn.set(false);
       }
     }
   };

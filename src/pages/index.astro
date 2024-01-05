@@ -1,9 +1,9 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import GetStartedButton from "../components/GetStartedButton";
 ---
 
 <Layout title="ToggleSoft">
-  <!--- more free and premium Tailwind CSS components at https://tailwinduikit.com/ --->
   <div class="mx-auto container py-12 px-4">
     <div class="w-full flex justify-center">
       <div
@@ -25,13 +25,7 @@ import Layout from "../layouts/Layout.astro";
                   Boldly going where no SaaS has gone before!
                 </h2>
               </div>
-              <a
-                href="/signup"
-                role="button"
-                aria-label="Join the community"
-                class="block mt-10 py-3 px-4 bg-white font-bold text-indigo-700 rounded-lg text-lg hover:bg-opacity-90 focus:ring-2 focus:ring-offset-2 focus:ring-white focus:outline-none"
-                >Get Started</a
-              >
+              <GetStartedButton client:only="react" />
             </div>
           </div>
         </div>

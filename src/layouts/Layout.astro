@@ -1,5 +1,5 @@
 ---
-import LoginButton from "../components/LoginButton.astro";
+import LoginButton from "../components/LoginButton.tsx";
 
 const { title } = Astro.props;
 ---
@@ -16,7 +16,10 @@ const { title } = Astro.props;
     <section id="mainContent" class="bg-white m-4">
       {
         Astro.url.pathname !== "/signup" &&
-          Astro.url.pathname !== "/signin" && <LoginButton />
+          Astro.url.pathname !== "/signin" &&
+          Astro.url.pathname !== "/logout" && (
+            <LoginButton client:only="react" />
+          )
       }
       <slot />
     </section>
