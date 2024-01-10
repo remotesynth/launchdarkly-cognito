@@ -38,7 +38,7 @@ const pricingData = await ldClient.variation("pricing-plans", context, {});
         <PricingCard
           id="starterCard"
           title={plan.name}
-          subhead="When you aren't sure what we do but figure it's cheap enough not to care."
+          subhead={plan.description}
           price={plan.price}
         />
       ))

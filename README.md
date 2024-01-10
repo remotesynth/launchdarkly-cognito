@@ -19,10 +19,12 @@ Your LaunchDarkly environment will need the following:
     "plans": [
         {
         "name": "Developer",
+        "description": "A plan for when you work for a company but you don't control the budget.",
         "price": "$49"
         },
         {
         "name": "Enterprise",
+        "description": "A plan for when our budget is big enough that you might never notice you're paying us.",
         "price": "$299"
         }
     ]
