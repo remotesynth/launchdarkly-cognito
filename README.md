@@ -1,54 +1,34 @@
-# Astro Starter Kit: Basics
+# Using LaunchDarkly with AWS Cognito
 
-```sh
-npm create astro@latest -- --template basics
-```
+This project explores how to implement user targeting using user data from Amazon Cognito and LaunchDarkly. The application impements targeting on both the client-side (using LaunchDarkly's client-side JavaScript SDK) and server side (using the server-side Node.js SDK). The application itself is built using Astro with a combination of Astro and React components. State is handled on the client and server using Nanostores.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
+In order to use this project locally, you'll need the following details in a `.env` file (note that the `PUBLIC_` denotes variables are available client side within Astro):
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+* Your Amazon Cognito User Pool ID as `PUBLIC_COGNITO_USER_POOL_ID`
+* Your Cognito Client ID as `PUBLIC_COGNITO_CLIENT_ID`
+* A LaunchDarkly Client Side ID as `PUBLIC_LAUNCHDARKLY_CLIENT_ID` 
+* A LaunchDarkly SDK Key as `LAUNCHDARKLY_SDK_KEY`
 
-![just-the-basics](https://github.com/withastro/astro/assets/2244813/a0a5533c-a856-4198-8470-2d67b1d7c554)
+Your LaunchDarkly environment will need the following:
 
-## 🚀 Project Structure
+* A segment that targets contexts that pass a user context with a property of `dev_type` that is either of the following two values: `professional` or `hobbyist`
+* A string flag with the key of `hero-text`. This flag should have at least a variation targeting the above segment.
+* A JSON flag with the key of `pricing-plans`. This flag should have at least a variation targeting the above segment. The structure of the JSON should be:
+    ```json
+    {
+    "plans": [
+        {
+        "name": "Developer",
+        "price": "$49"
+        },
+        {
+        "name": "Enterprise",
+        "price": "$299"
+        }
+    ]
+    }
+    ```
 
-Inside of your Astro project, you'll see the following folders and files:
+    Note that you can include more than 2 pricing items.
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── components/
-│   │   └── Card.astro
-│   ├── layouts/
-│   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
-
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Once the setup is complete, you should be able to register with accounts that are either "hobbyist" or "professional" and you should see a different tagline in the hero banner on the home page and different pricing on the pricing page.
