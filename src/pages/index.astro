@@ -6,16 +6,16 @@ import { getClient } from "../lib/ld-server";
 
 // get the logged in user data from the server side state store
 // if none is set, set an anonymous user context
-let userData = user.get();
-if (JSON.stringify(userData) === "{}") {
-  userData = {
+let context = user.get();
+if (JSON.stringify(context) === "{}") {
+  context = {
     kind: "user",
     anonymous: true,
     key: "anonymous-1",
   };
 }
 const ldClient = await getClient();
-const heroText = await ldClient.variation("hero-text", userData, "");
+const heroText = await ldClient.variation("hero-text", context, "");
 ---
 
 <Layout title="ToggleSoft">
