@@ -1,6 +1,22 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import PricingCard from "../components/PricingCard.astro";
+import { user } from "../store/store";
+import { getClient } from "../lib/ld-server";
+
+// get the logged in user data from the server side state store
+// if none is set, set an anonymous user context
+let context = user.get();
+if (JSON.stringify(context) === "{}") {
+  context = {
+    kind: "user",
+    anonymous: true,
+    key: "anonymous-1",
+  };
+}
+
+const ldClient = await getClient();
+const pricingData = await ldClient.variation("pricing-plans", context, {});
 ---
 
 <Layout title="ToggleSoft Pricing">
@@ -15,25 +31,17 @@ import PricingCard from "../components/PricingCard.astro";
   </div>
   <div
     id="pricingCards"
-    class="lg:grid lg:grid-cols-3 sm:gap-6 xl:gap-10 lg:space-y-0"
+    class="lg:grid lg:grid-cols-2 sm:gap-6 xl:gap-10 lg:space-y-0"
   >
-    <PricingCard
-      id="starterCard"
-      title="Starter"
-      subhead="When you aren't sure what we do but figure it's cheap enough not to care."
-      price="9"
-    />
-    <PricingCard
-      id="companyCard"
-      title="Company"
-      subhead="When you have a dev team and want to see if they follow directions."
-      price="99"
-    />
-    <PricingCard
-      id="enterpriseCard"
-      title="Enterprise"
-      subhead="Your budget is big enough that you might never notice you're paying us."
-      price="499"
-    />
+    {
+      pricingData.plans.map((plan) => (
+        <PricingCard
+          id="starterCard"
+          title={plan.name}
+          subhead="When you aren't sure what we do but figure it's cheap enough not to care."
+          price={plan.price}
+        />
+      ))
+    }
   </div>
 </Layout>

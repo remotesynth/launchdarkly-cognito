@@ -1,11 +1,13 @@
 import { signOut } from "../lib/cognito";
 import { useEffect } from "react";
-import { isLoggedIn } from "../store/store";
+import { isLoggedIn, user } from "../store/store";
 
 export default function SignOut() {
   useEffect(() => {
     signOut();
+    // once cognito is signed out, clear the client side state
     isLoggedIn.set(false);
+    user.set({});
   }, []);
   return (
     <section id="createAccountSection" className="bg-gray-50">

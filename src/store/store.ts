@@ -1,3 +1,5 @@
+/* this manages client and server stores for application state */
+
 import { persistentAtom } from "@nanostores/persistent";
 
 export const isLoggedIn = persistentAtom<boolean>("isLoggedIn", false, {
@@ -5,7 +7,11 @@ export const isLoggedIn = persistentAtom<boolean>("isLoggedIn", false, {
   decode: JSON.parse,
 });
 
-export const developerType = persistentAtom<string>("developerType", "", {
-  encode: JSON.stringify,
-  decode: JSON.parse,
-});
+export const user = persistentAtom<Object>(
+  "user",
+  {},
+  {
+    encode: JSON.stringify,
+    decode: JSON.parse,
+  }
+);

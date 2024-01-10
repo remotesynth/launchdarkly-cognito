@@ -2,9 +2,12 @@ import {
   signUpUserWithEmail,
   verifyCode,
   signInWithEmail,
+  getAttributesAsObject,
 } from "../lib/cognito";
+import { identifyContext } from "../lib/ld-client";
 import { useState } from "react";
-import { isLoggedIn, developerType } from "../store/store";
+import { isLoggedIn } from "../store/store";
+import ErrorMessage from "./ErrorMessage";
 
 export default function SignUp() {
   const [email, setEmail] = useState("");
@@ -29,9 +32,12 @@ export default function SignUp() {
     }
     try {
       await signUpUserWithEmail(email, password, devType);
+      // the sign up requires a confirmation code
+      // this changes the UI state to allow that code to be entered
       setCreated(true);
     } catch (err) {
       if (err instanceof Error) {
+        setError(err.message);
         console.log("error", err.message);
       }
     }
@@ -40,24 +46,38 @@ export default function SignUp() {
   const confirmSignUpClicked = async () => {
     try {
       await verifyCode(email, otp);
-      // get their tokens
+      // once the user is verified, sign them in automatically
       const currentUser = await signInWithEmail(email, password);
-      /*window.localStorage.setItem(
-        "accessToken",
-        `${currentUser.accessToken.jwtToken}`
-      );
-      window.localStorage.setItem(
-        "refreshToken",
-        `${currentUser.refreshToken.token}`
-      ); */
+      // set the client side state to logged in
       isLoggedIn.set(true);
-      developerType.set(devType);
-      window.location.href = "/";
+      // this converts the cognito user attrbutes array into a plain object
+      // making it easier to send as a LaunchDarkly context object
+      const attributes = await getAttributesAsObject();
+      const context = {
+        kind: "user",
+        key: attributes.sub,
+        ...attributes,
+      };
+      // identify the user to the LaunchDarkly client side SDK
+      identifyContext(context);
+
+      // this passes the user data to make it available for server side rendering.
+      await fetch("/api/identify.json", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(context),
+      });
     } catch (err) {
       if (err instanceof Error) {
         console.log("error", err.message);
+        setError(err.message);
         isLoggedIn.set(false);
       }
+    }
+
+    // assuming the confirmation worked and they are logged in, send them back to the home page
+    if (!error.length && isLoggedIn.get()) {
+      window.location.href = "/";
     }
   };
 
@@ -69,7 +89,7 @@ export default function SignUp() {
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
               Create your account
             </h1>
-            <p className="text-red-500">{error}</p>
+            {error.length > 0 && <ErrorMessage message={error} />}
             {!created && (
               <>
                 <div>

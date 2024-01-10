@@ -1,3 +1,6 @@
+// this is a modified version of a component from the following repo:
+// https://github.com/dbroadhurst/aws-cognito-react/blob/master/app/src/libs/cognito.ts
+
 import {
   AuthenticationDetails,
   CognitoUser,
@@ -130,13 +133,18 @@ export async function getAttributes() {
   });
 }
 
-export async function getAttribute(attributeName: string) {
-  const attributes = await getAttributes();
-  const attribute = attributes.find(
-    (attribute: any) => attribute.Name === attributeName
-  );
+// Cognito returns attributes in an array but this helper function makes it easier to get them as an object
+// while also removing the "custom:" prefix from any custom attribute names
+export async function getAttributesAsObject() {
+  const attributesArray: Array<any> = (await getAttributes()) as Array<any>;
+  const attibutesStruct = {};
+  for (let i = 0; i < attributesArray.length; i++) {
+    let keyName = attributesArray[i].getName().replace("custom:", "");
+    let value = attributesArray[i].getValue();
+    attibutesStruct[keyName] = value;
+  }
 
-  return attribute;
+  return attibutesStruct;
 }
 
 export async function setAttribute(attribute: any) {

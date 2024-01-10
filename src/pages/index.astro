@@ -1,6 +1,21 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import GetStartedButton from "../components/GetStartedButton";
+import { user } from "../store/store";
+import { getClient } from "../lib/ld-server";
+
+// get the logged in user data from the server side state store
+// if none is set, set an anonymous user context
+let userData = user.get();
+if (JSON.stringify(userData) === "{}") {
+  userData = {
+    kind: "user",
+    anonymous: true,
+    key: "anonymous-1",
+  };
+}
+const ldClient = await getClient();
+const heroText = await ldClient.variation("hero-text", userData, "");
 ---
 
 <Layout title="ToggleSoft">
@@ -22,7 +37,7 @@ import GetStartedButton from "../components/GetStartedButton";
                   ToggleSoft
                 </h1>
                 <h2 class="mt-12 text-xl text-white font-black text-center">
-                  Boldly going where no SaaS has gone before!
+                  {heroText}
                 </h2>
               </div>
               <GetStartedButton client:only="react" />
