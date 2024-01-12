@@ -137,12 +137,10 @@ export async function getAttributes() {
 // while also removing the "custom:" prefix from any custom attribute names
 export async function getAttributesAsObject() {
   const attributesArray: Array<any> = (await getAttributes()) as Array<any>;
-  const attibutesStruct = {};
-  for (let i = 0; i < attributesArray.length; i++) {
-    let keyName = attributesArray[i].getName().replace("custom:", "");
-    let value = attributesArray[i].getValue();
-    attibutesStruct[keyName] = value;
-  }
+  const attibutesStruct = attributesArray.reduce((acc, cur) => {
+    acc[cur.getName().replace("custom:", "")] = cur.getValue();
+    return acc;
+  }, {});
 
   return attibutesStruct;
 }
